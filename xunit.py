@@ -4,10 +4,13 @@ class TestCase:
         self.name = name
     def setUp(self):
         pass
+    def tearDown(self):
+        pass
     def run(self):
         self.setUp()
         method = getattr(self, self.name)
         method()
+        self.tearDown()
         
 # メソッドが起動されたかを記録する
 class WasRun(TestCase):
@@ -15,6 +18,9 @@ class WasRun(TestCase):
         self.log = "setUp "
     def testMethod(self):
         self.log = self.log + "testMethod "
+    def tearDown(self):
+        self.log = self.log + "tearDown "
+
 
 # テストコード
 
