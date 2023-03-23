@@ -12,26 +12,17 @@ class TestCase:
 # メソッドが起動されたかを記録する
 class WasRun(TestCase):
     def setUp(self):
-        self.wasRun = None
         self.log = "setUp "
     def testMethod(self):
-        self.wasRun = 1
         self.log = self.log + "testMethod "
 
 # テストコード
 
 class TestCaseTest(TestCase):
-    def setUp(self):
-        self.test = WasRun("testMethod")
-
-    def testRunning(self):
-        self.test.run()
-        assert(self.test.wasRun)
-
     def testTemplateMethod(self):
+        self.test = WasRun("testMethod")
         self.test.run()
         assert("setUp testMethod " == self.test.log)
         
 
-TestCaseTest("testRunning").run()
 TestCaseTest("testTemplateMethod").run()
