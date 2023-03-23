@@ -1,3 +1,4 @@
+# テストメソッドを動的に呼び出す
 class TestCase:
     def __init__(self, name):
         self.name = name
@@ -5,12 +6,15 @@ class TestCase:
         method = getattr(self, self.name)
         method()
         
+# メソッドが起動されたかを記録する
 class WasRun(TestCase):
     def __init__(self, name):
         self.wasRun = None
         super().__init__(name)
     def testMethod(self):
         self.wasRun = 1
+
+# テストコード
 
 class TestCaseTest(TestCase):
     def testRunning(self):
@@ -19,4 +23,11 @@ class TestCaseTest(TestCase):
         test.run()
         assert(test.wasRun)
 
+    def testSetUp(self):
+        test = WasRun("testMethod")
+        test.run()
+        assert(test.wasSetUp)
+        
+
 TestCaseTest("testRunning").run()
+TestCaseTest("testSetUp").run()
