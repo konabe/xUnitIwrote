@@ -41,21 +41,19 @@ class WasRun extends TestCase {
 }
 
 class TestCaseTest extends TestCase {
-  private WasRun _test;
-
   TestCaseTest(String name) {
     super(name);
   }
 
   @Override
   public void setUp() {
-    _test = new WasRun("testMethod");
     
   }
 
   public void testTemplateMethod() throws InvocationTargetException {
-    _test.run();
-    assert "setUp testMethod ".equals(_test.log);
+    WasRun test = new WasRun("testMethod");
+    test.run();
+    assert "setUp testMethod ".equals(test.log);
   }
 }
 
