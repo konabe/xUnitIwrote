@@ -5,6 +5,10 @@ class WasRun {
     wasRun = null;
   }
 
+  void run() {
+    testMethod();
+  }
+
   void testMethod() {
     wasRun = 1;
   }
@@ -14,7 +18,7 @@ class Main {
   public static void main(String[] args) {
     WasRun test = new WasRun("testMethod");
     System.out.println(test.wasRun);
-    test.testMethod();
+    test.run();
     System.out.println(test.wasRun);
   }
 }
