@@ -18,5 +18,5 @@ Martin Fowler "ソフトウェアエンジニアリングの歴史の中で、�
 
 Java 17.0.2
 ```
-javac xunit.java && java Main
+javac xunit.java && java -ea Main
 ```
