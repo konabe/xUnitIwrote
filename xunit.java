@@ -1,4 +1,5 @@
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 // テストメソッドを動的に呼び出す
 class TestCase {
@@ -10,8 +11,7 @@ class TestCase {
 
   public void setUp() {}
 
-  public TestResult run() {
-    TestResult result = new TestResult();
+  public void run(TestResult result) {
     result.testStarted();
     this.setUp();
     try {
@@ -22,10 +22,27 @@ class TestCase {
       result.testFailed();
     }
     this.tearDown();
-    return result;
   }
 
   public void tearDown() {}
+}
+
+class TestSuite {
+  private ArrayList<TestCase> _tests;
+
+  TestSuite() {
+    _tests = new ArrayList<TestCase>();
+  }
+
+  void add(TestCase test) {
+    _tests.add(test);
+  }
+
+  void run(TestResult result) {
+    for (TestCase test : _tests) {
+      test.run(result);
+    }
+  }
 }
 
 class TestResult {
@@ -89,20 +106,23 @@ class TestCaseTest extends TestCase {
 
   public void testTemplateMethod() {
     WasRun test = new WasRun("testMethod");
-    test.run();
+    TestResult result = new TestResult();
+    test.run(result);
     // String#equals で比較すること
     assert "setUp testMethod tearDown ".equals(test.log);
   }
 
   public void testResult() {
     WasRun test = new WasRun("testMethod");
-    TestResult result = test.run();
+    TestResult result = new TestResult();
+    test.run(result);
     assert "1 run, 0 failed".equals(result.summary());
   }
 
   public void testFailedResult() {
     WasRun test = new WasRun("testBrokenMethod");
-    TestResult result = test.run();
+    TestResult result = new TestResult();
+    test.run(result);
     assert "1 run, 1 failed".equals(result.summary());
   }
 
@@ -112,13 +132,27 @@ class TestCaseTest extends TestCase {
     result.testFailed();
     assert "1 run, 1 failed".equals(result.summary());
   }
+
+  public void testSuite() {
+    TestSuite suite = new TestSuite();
+    suite.add(new WasRun("testMethod"));
+    suite.add(new WasRun("testBrokenMethod"));
+    TestResult result = new TestResult();
+    suite.run(result);
+    assert "2 run, 1 failed".equals(result.summary());
+  }
 }
 
 class Main {
   public static void main(String[] args) {
-    new TestCaseTest("testTemplateMethod").run();
-    new TestCaseTest("testResult").run();
-    new TestCaseTest("testFailedResult").run();
-    new TestCaseTest("testFailedResultFormatting").run();
+    TestSuite suite = new TestSuite();
+    suite.add(new TestCaseTest("testTemplateMethod"));
+    suite.add(new TestCaseTest("testResult"));
+    suite.add(new TestCaseTest("testFailedResult"));
+    suite.add(new TestCaseTest("testFailedResultFormatting"));
+    suite.add(new TestCaseTest("testSuite"));
+    TestResult result = new TestResult();
+    suite.run(result);
+    System.out.println(result.summary());
   }
 }
