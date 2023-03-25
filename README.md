@@ -14,3 +14,9 @@ Martin Fowler "ソフトウェアエンジニアリングの歴史の中で、�
 - [ ] 失敗したテストを出力する
 - [ ] setUpのエラーをキャッチして出力する
 - [ ] TestCaseクラスからTestSuiteを作る
+
+
+Java 17.0.2
+```
+javac xunit.java && java Main
+```
