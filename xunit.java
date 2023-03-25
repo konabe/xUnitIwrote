@@ -11,19 +11,25 @@ class TestCase {
 
   public void setUp() {}
 
-  public void run() throws InvocationTargetException {
+  public TestResult run() throws InvocationTargetException {
     this.setUp();
     try {
       // getMethodはpublicを宣言しないと見つけてくれない
       Method method = this.getClass().getMethod(_name);
       method.invoke(this);
     } catch (IllegalAccessException | NoSuchMethodException ex) {
-      return;
     }
     this.tearDown();
+    return new TestResult();
   }
 
   public void tearDown() {}
+}
+
+class TestResult {
+  String summary() {
+    return "1 run, 0 failed";
+  }
 }
 
 // メソッドが起動されたかを記録する
@@ -65,10 +71,17 @@ class TestCaseTest extends TestCase {
     // String#equals で比較すること
     assert "setUp testMethod tearDown ".equals(test.log);
   }
+
+  public void testResult() throws InvocationTargetException {
+    WasRun test = new WasRun("testMethod");
+    TestResult result = test.run();
+    assert "1 run, 0 failed".equals(result.summary());
+  }
 }
 
 class Main {
   public static void main(String[] args) throws InvocationTargetException {
     new TestCaseTest("testTemplateMethod").run();
+    new TestCaseTest("testResult").run();
   }
 }
