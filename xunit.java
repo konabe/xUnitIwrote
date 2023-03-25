@@ -45,10 +45,17 @@ class TestCaseTest extends TestCase {
     test.run();
     assert test.wasRun == 1;
   }
+
+  public void testSetUp() throws InvocationTargetException {
+    WasRun test = new WasRun("testMethod");
+    test.run();
+    assert test.wasSetUp == 1;
+  }
 }
 
 class Main {
   public static void main(String[] args) throws InvocationTargetException {
     new TestCaseTest("testRunning").run();
+    new TestCaseTest("testSetUp").run();
   }
 }
