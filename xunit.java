@@ -12,6 +12,8 @@ class TestCase {
   public void setUp() {}
 
   public TestResult run() throws InvocationTargetException {
+    TestResult result = new TestResult();
+    result.testStarted();
     this.setUp();
     try {
       // getMethodはpublicを宣言しないと見つけてくれない
@@ -20,15 +22,25 @@ class TestCase {
     } catch (IllegalAccessException | NoSuchMethodException ex) {
     }
     this.tearDown();
-    return new TestResult();
+    return result;
   }
 
   public void tearDown() {}
 }
 
 class TestResult {
+  private Integer _runCount;
+
+  TestResult() {
+    _runCount = 0;
+  }
+
+  void testStarted() {
+    _runCount ++;
+  }
+
   String summary() {
-    return "1 run, 0 failed";
+    return String.format("%d run, 0 failed", _runCount);
   }
 }
 
