@@ -1,19 +1,28 @@
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
-class WasRun {
-  Integer wasRun;
-  private String _name;
+// テストメソッドを動的に呼び出す
+class TestCase {
+  protected String _name;
 
-  WasRun(String name) {
-    wasRun = null;
+  TestCase(String name) {
     _name = name;
   }
 
-   void run() throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+   public void run() throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
     // getMethodはpublicを宣言しないと見つけてくれない
     Method method = this.getClass().getMethod(_name);
     method.invoke(this);
+  }
+}
+
+// メソッドが起動されたかを記録する
+class WasRun extends TestCase {
+  Integer wasRun;
+
+  WasRun(String name) {
+    super(name);
+    wasRun = null;
   }
 
   public void testMethod() {
