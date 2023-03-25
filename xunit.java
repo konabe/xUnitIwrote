@@ -30,10 +30,10 @@ class WasRun extends TestCase {
 
   WasRun(String name) {
     super(name);
-    wasRun = null;
   }
 
   public void setUp() {
+    wasRun = null;
     this.wasSetUp = 1;
   }
 
@@ -50,7 +50,6 @@ class TestCaseTest extends TestCase {
 
   public void testRunning() throws InvocationTargetException {
     WasRun test = new WasRun("testMethod");
-    assert test.wasRun == null;
     test.run();
     assert test.wasRun == 1;
   }
