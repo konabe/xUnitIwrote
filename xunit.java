@@ -1,3 +1,15 @@
+class WasRun {
+  Integer wasRun;
+
+  WasRun(String name) {
+    wasRun = null;
+  }
+
+  void testMethod() {
+    wasRun = 1;
+  }
+}
+
 class Main {
   public static void main(String[] args) {
     WasRun test = new WasRun("testMethod");
