@@ -4,15 +4,19 @@ import java.lang.reflect.InvocationTargetException;
 // テストメソッドを動的に呼び出す
 class TestCase {
   protected String _name;
-
+  
   TestCase(String name) {
     _name = name;
   }
 
-   public void run() throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-    // getMethodはpublicを宣言しないと見つけてくれない
-    Method method = this.getClass().getMethod(_name);
-    method.invoke(this);
+  public void run() throws InvocationTargetException {
+    try {
+      // getMethodはpublicを宣言しないと見つけてくれない
+      Method method = this.getClass().getMethod(_name);
+      method.invoke(this);
+    } catch (IllegalAccessException | NoSuchMethodException ex) {
+      return;
+    }
   }
 }
 
@@ -30,11 +34,21 @@ class WasRun extends TestCase {
   }
 }
 
-class Main {
-  public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+class TestCaseTest extends TestCase {
+  TestCaseTest(String name) {
+    super(name);
+  }
+
+  public void testRunning() throws InvocationTargetException {
     WasRun test = new WasRun("testMethod");
-    System.out.println(test.wasRun);
+    assert test.wasRun == null;
     test.run();
-    System.out.println(test.wasRun);
+    assert test.wasRun == 1;
+  }
+}
+
+class Main {
+  public static void main(String[] args) throws InvocationTargetException {
+    new TestCaseTest("testRunning").run();
   }
 }
