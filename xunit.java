@@ -20,7 +20,10 @@ class TestCase {
     } catch (IllegalAccessException | NoSuchMethodException ex) {
       return;
     }
+    this.tearDown();
   }
+
+  public void tearDown() {}
 }
 
 // メソッドが起動されたかを記録する
@@ -31,12 +34,18 @@ class WasRun extends TestCase {
     super(name);
   }
 
+  @Override
   public void setUp() {
     this.log = "setUp ";
   }
 
   public void testMethod() {
     this.log += "testMethod ";
+  }
+
+  @Override
+  public void tearDown() {
+    this.log += "tearDown ";
   }
 }
 
@@ -53,7 +62,8 @@ class TestCaseTest extends TestCase {
   public void testTemplateMethod() throws InvocationTargetException {
     WasRun test = new WasRun("testMethod");
     test.run();
-    assert "setUp testMethod ".equals(test.log);
+    // String#equals で比較すること
+    assert "setUp testMethod tearDown ".equals(test.log);
   }
 }
 
