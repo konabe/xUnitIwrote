@@ -9,7 +9,10 @@ class TestCase {
     _name = name;
   }
 
+  public void setUp() {}
+
   public void run() throws InvocationTargetException {
+    this.setUp();
     try {
       // getMethodはpublicを宣言しないと見つけてくれない
       Method method = this.getClass().getMethod(_name);
@@ -23,11 +26,17 @@ class TestCase {
 // メソッドが起動されたかを記録する
 class WasRun extends TestCase {
   Integer wasRun;
+  Integer wasSetUp;
 
   WasRun(String name) {
     super(name);
     wasRun = null;
   }
+
+  public void setUp() {
+    this.wasSetUp = 1;
+  }
+
 
   public void testMethod() {
     wasRun = 1;
