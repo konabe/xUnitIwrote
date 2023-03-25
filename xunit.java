@@ -1,5 +1,4 @@
 import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 // テストメソッドを動的に呼び出す
 class TestCase {
@@ -11,7 +10,7 @@ class TestCase {
 
   public void setUp() {}
 
-  public TestResult run() throws InvocationTargetException {
+  public TestResult run() {
     TestResult result = new TestResult();
     result.testStarted();
     this.setUp();
@@ -19,7 +18,8 @@ class TestCase {
       // getMethodはpublicを宣言しないと見つけてくれない
       Method method = this.getClass().getMethod(_name);
       method.invoke(this);
-    } catch (IllegalAccessException | NoSuchMethodException ex) {
+    } catch (Exception ex) {
+      result.testFailed();
     }
     this.tearDown();
     return result;
@@ -30,17 +30,23 @@ class TestCase {
 
 class TestResult {
   private Integer _runCount;
+  private Integer _failedCount;
 
   TestResult() {
     _runCount = 0;
+    _failedCount = 0;
   }
 
   void testStarted() {
     _runCount ++;
   }
 
+  void testFailed() {
+    _failedCount ++;
+  }
+
   String summary() {
-    return String.format("%d run, 0 failed", _runCount);
+    return String.format("%d run, %d failed", _runCount, _failedCount);
   }
 }
 
@@ -61,6 +67,10 @@ class WasRun extends TestCase {
     this.log += "testMethod ";
   }
 
+  public void testBrokenMethod() throws IllegalAccessException {
+    throw new IllegalAccessException();
+  }
+
   @Override
   public void tearDown() {
     this.log += "tearDown ";
@@ -77,23 +87,38 @@ class TestCaseTest extends TestCase {
     
   }
 
-  public void testTemplateMethod() throws InvocationTargetException {
+  public void testTemplateMethod() {
     WasRun test = new WasRun("testMethod");
     test.run();
     // String#equals で比較すること
     assert "setUp testMethod tearDown ".equals(test.log);
   }
 
-  public void testResult() throws InvocationTargetException {
+  public void testResult() {
     WasRun test = new WasRun("testMethod");
     TestResult result = test.run();
     assert "1 run, 0 failed".equals(result.summary());
   }
+
+  public void testFailedResult() {
+    WasRun test = new WasRun("testBrokenMethod");
+    TestResult result = test.run();
+    assert "1 run, 1 failed".equals(result.summary());
+  }
+
+  public void testFailedResultFormatting() {
+    TestResult result = new TestResult();
+    result.testStarted();
+    result.testFailed();
+    assert "1 run, 1 failed".equals(result.summary());
+  }
 }
 
 class Main {
-  public static void main(String[] args) throws InvocationTargetException {
+  public static void main(String[] args) {
     new TestCaseTest("testTemplateMethod").run();
     new TestCaseTest("testResult").run();
+    new TestCaseTest("testFailedResult").run();
+    new TestCaseTest("testFailedResultFormatting").run();
   }
 }
