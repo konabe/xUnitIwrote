@@ -26,7 +26,7 @@ class TestCase {
 // メソッドが起動されたかを記録する
 class WasRun extends TestCase {
   Integer wasRun;
-  Integer wasSetUp;
+  String log;
 
   WasRun(String name) {
     super(name);
@@ -34,7 +34,7 @@ class WasRun extends TestCase {
 
   public void setUp() {
     wasRun = null;
-    this.wasSetUp = 1;
+    this.log = "setUp ";
   }
 
 
@@ -63,7 +63,7 @@ class TestCaseTest extends TestCase {
 
   public void testSetUp() throws InvocationTargetException {
     _test.run();
-    assert _test.wasSetUp == 1;
+    assert "setUp " == _test.log;
   }
 }
 
