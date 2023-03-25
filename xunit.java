@@ -37,9 +37,9 @@ class WasRun extends TestCase {
     this.log = "setUp ";
   }
 
-
   public void testMethod() {
     wasRun = 1;
+    this.log += "testMethod ";
   }
 }
 
@@ -58,12 +58,12 @@ class TestCaseTest extends TestCase {
 
   public void testRunning() throws InvocationTargetException {
     _test.run();
-    assert _test.wasRun == 1;
+    assert "setUp testMethod ".equals(_test.log);
   }
 
   public void testSetUp() throws InvocationTargetException {
     _test.run();
-    assert "setUp " == _test.log;
+    assert _test.wasRun == 1;
   }
 }
 
