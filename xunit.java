@@ -25,7 +25,6 @@ class TestCase {
 
 // メソッドが起動されたかを記録する
 class WasRun extends TestCase {
-  Integer wasRun;
   String log;
 
   WasRun(String name) {
@@ -33,12 +32,10 @@ class WasRun extends TestCase {
   }
 
   public void setUp() {
-    wasRun = null;
     this.log = "setUp ";
   }
 
   public void testMethod() {
-    wasRun = 1;
     this.log += "testMethod ";
   }
 }
@@ -56,20 +53,14 @@ class TestCaseTest extends TestCase {
     
   }
 
-  public void testRunning() throws InvocationTargetException {
+  public void testTemplateMethod() throws InvocationTargetException {
     _test.run();
     assert "setUp testMethod ".equals(_test.log);
-  }
-
-  public void testSetUp() throws InvocationTargetException {
-    _test.run();
-    assert _test.wasRun == 1;
   }
 }
 
 class Main {
   public static void main(String[] args) throws InvocationTargetException {
-    new TestCaseTest("testRunning").run();
-    new TestCaseTest("testSetUp").run();
+    new TestCaseTest("testTemplateMethod").run();
   }
 }
