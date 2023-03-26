@@ -10,6 +10,7 @@ class TestCase {
   }
 
   public void setUp() {}
+  public void tearDown() {}
 
   public void run(TestResult result) {
     result.testStarted();
@@ -23,8 +24,6 @@ class TestCase {
     }
     this.tearDown();
   }
-
-  public void tearDown() {}
 }
 
 class TestSuite {
@@ -95,42 +94,40 @@ class WasRun extends TestCase {
 }
 
 class TestCaseTest extends TestCase {
+  private TestResult _result;
+
   TestCaseTest(String name) {
     super(name);
   }
 
   @Override
   public void setUp() {
-    
+    _result = new TestResult();
   }
 
   public void testTemplateMethod() {
     WasRun test = new WasRun("testMethod");
-    TestResult result = new TestResult();
-    test.run(result);
+    test.run(_result);
     // String#equals で比較すること
     assert "setUp testMethod tearDown ".equals(test.log);
   }
 
   public void testResult() {
     WasRun test = new WasRun("testMethod");
-    TestResult result = new TestResult();
-    test.run(result);
-    assert "1 run, 0 failed".equals(result.summary());
+    test.run(_result);
+    assert "1 run, 0 failed".equals(_result.summary());
   }
 
   public void testFailedResult() {
     WasRun test = new WasRun("testBrokenMethod");
-    TestResult result = new TestResult();
-    test.run(result);
-    assert "1 run, 1 failed".equals(result.summary());
+    test.run(_result);
+    assert "1 run, 1 failed".equals(_result.summary());
   }
 
   public void testFailedResultFormatting() {
-    TestResult result = new TestResult();
-    result.testStarted();
-    result.testFailed();
-    assert "1 run, 1 failed".equals(result.summary());
+    _result.testStarted();
+    _result.testFailed();
+    assert "1 run, 1 failed".equals(_result.summary());
   }
 
   public void testSuite() {
