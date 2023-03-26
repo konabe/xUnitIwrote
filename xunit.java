@@ -84,6 +84,7 @@ class WasRun extends TestCase {
   }
 
   public void testBrokenMethod() throws IllegalAccessException {
+    this.log += "testBrokenMethod ";
     throw new IllegalAccessException();
   }
 
@@ -110,6 +111,13 @@ class TestCaseTest extends TestCase {
     test.run(_result);
     // String#equals で比較すること
     assert "setUp testMethod tearDown ".equals(test.log);
+  }
+
+  public void testBrokenMethod() {
+    WasRun test = new WasRun("testBrokenMethod");
+    test.run(_result);
+    // String#equals で比較すること
+    assert "setUp testBrokenMethod tearDown ".equals(test.log);
   }
 
   public void testResult() {
@@ -144,6 +152,7 @@ class Main {
   public static void main(String[] args) {
     TestSuite suite = new TestSuite();
     suite.add(new TestCaseTest("testTemplateMethod"));
+    suite.add(new TestCaseTest("testBrokenMethod"));
     suite.add(new TestCaseTest("testResult"));
     suite.add(new TestCaseTest("testFailedResult"));
     suite.add(new TestCaseTest("testFailedResultFormatting"));
