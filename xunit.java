@@ -9,12 +9,17 @@ class TestCase {
     _name = name;
   }
 
-  public void setUp() {}
+  public void setUp() throws Exception  {}
   public void tearDown() {}
 
   public void run(TestResult result) {
     result.testStarted();
-    this.setUp();
+    try {
+      this.setUp();
+    } catch (Exception ex) {
+      result.setUpFailed();
+      return;
+    }
     try {
       // getMethodはpublicを宣言しないと見つけてくれない
       Method method = this.getClass().getMethod(_name);
@@ -47,10 +52,16 @@ class TestSuite {
 class TestResult {
   private Integer _runCount;
   private Integer _failedCount;
+  private boolean _setupFailed;
 
   TestResult() {
     _runCount = 0;
     _failedCount = 0;
+    _setupFailed = false;
+  }
+
+  void setUpFailed() {
+    _setupFailed = true;
   }
 
   void testStarted() {
@@ -62,6 +73,9 @@ class TestResult {
   }
 
   String summary() {
+    if (_setupFailed) {
+      return "setUp failed.\n"; 
+    }
     return String.format("%d run, %d failed", _runCount, _failedCount);
   }
 }
@@ -75,7 +89,7 @@ class WasRun extends TestCase {
   }
 
   @Override
-  public void setUp() {
+  public void setUp() throws Exception {
     this.log = "setUp ";
   }
 
@@ -91,6 +105,22 @@ class WasRun extends TestCase {
   @Override
   public void tearDown() {
     this.log += "tearDown ";
+  }
+}
+
+class SetupFailure extends TestCase {
+  SetupFailure(String name) {
+    super(name);
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    throw new IllegalAccessException();
+  }
+
+  public void testMethod() {
+    assert true;
   }
 }
 
@@ -132,10 +162,22 @@ class TestCaseTest extends TestCase {
     assert "1 run, 1 failed".equals(_result.summary());
   }
 
+  public void testSetupFailureOutput() {
+    WasRun test = new WasRun("testBrokenMethod");
+    test.run(_result);
+    assert "1 run, 1 failed".equals(_result.summary());
+  }
+
   public void testFailedResultFormatting() {
     _result.testStarted();
     _result.testFailed();
     assert "1 run, 1 failed".equals(_result.summary());
+  }
+
+  public void testSetupFailure() {
+    SetupFailure test = new SetupFailure("testMethod");
+    test.run(_result);
+    assert "setUp failed.\n".equals(_result.summary());
   }
 
   public void testSuite() {
@@ -156,6 +198,7 @@ class Main {
     suite.add(new TestCaseTest("testResult"));
     suite.add(new TestCaseTest("testFailedResult"));
     suite.add(new TestCaseTest("testFailedResultFormatting"));
+    suite.add(new TestCaseTest("testSetupFailure"));
     suite.add(new TestCaseTest("testSuite"));
     TestResult result = new TestResult();
     suite.run(result);
